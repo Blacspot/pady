@@ -59,3 +59,4 @@ class ADBManger:
         raw = self.run_adb(["devices"])
         if "unauthorized" in raw:
             return "UNAUTHORIZED"
+        return "READY"
