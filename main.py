@@ -1,66 +1,67 @@
 from adb_manager import ADBManger
-from scanner import DeviceScanner
-from selector import FolderSelector
-from estimator import BackupEstimator
-from ui import show_estimate
+from media_scanner import MediaScanner
+from category_selector import CategorySelector
+
 
 def main():
+
     adb = ADBManger()
+
     status = adb.is_device_ready()
+
     if status == "NO_DEVICE":
         print("No device detected. Please connect your phone.")
         return
+
     if status == "UNAUTHORIZED":
         print("Device detected but unauthorized.")
         print("Please allow USB debugging on your phone.")
         return
-    
+
     device_id = adb.detect_device()
+
     print(f"Device connected: {device_id}")
+
     info = adb.get_device_info()
 
-    print("\n Device Info")
+    print("\nDevice Info")
     print("----------------")
+
     print(f"Model: {info['model']}")
     print(f"Manufacturer: {info['manufacturer']}")
     print(f"Android: {info['android_version']}")
 
-    scanner = DeviceScanner(device_id)
-    folders = scanner.scan()
-    print("\nDetected Folders")
-    print("----------------")
+    scanner = MediaScanner(device_id)
 
-    for index, folder in enumerate(folders,start=1):
-        print(f"{index}. {folder['name']}")
+    all_files = scanner.get_all_files()
+    print(f"\nDiscovered {len(all_files):,} files.")
 
-    selected_folders = FolderSelector.select_folders(
-        folders
-        )
-    if selected_folders is None:
-        print("Backup cancelled.")
-        exit()
-    if not selected_folders:
-        print("No folders selected. Exiting.")
-        exit()
-    print("\nSelected Folders")
-    print("----------------")
-    for folder in selected_folders:
-        print(f"✓ {folder['name']}")    
-
-    destination = input(
-        "\nEnter backup destination path: "
-    ).strip()
-    estimator = BackupEstimator(
-        device_id
+    categories = scanner.categorize_files(
+        all_files
     )
-    results = estimator.analyze(
-        selected_folders,
-        destination
-    )   
-    proceed = show_estimate(results)
-    if not proceed:
-        print("\nBackup cancelled.")
-        exit()     
+
+    stats = scanner.build_statistics(
+        categories
+    )
+
+    selected_files = CategorySelector.select(
+        categories,
+        stats
+    )
+
+    if selected_files is None:
+        print("Backup cancelled.")
+        return
+
+    print(
+        f"\nSelected {len(selected_files):,} files."
+    )
+
+    print("\nFirst 10 files detected:")
+
+    for file in selected_files[:10]:
+        print(file)
+
 
 if __name__ == "__main__":
-    main()  
+    main()

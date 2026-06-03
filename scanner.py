@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 class DeviceScanner:
     def __init__(self, device_id):
