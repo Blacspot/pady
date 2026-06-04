@@ -1,6 +1,8 @@
 from adb_manager import ADBManger
 from media_scanner import MediaScanner
 from category_selector import CategorySelector
+from estimate_ui import EstimateUI
+from backup_estimator import BackupEstimator
 
 
 def main():
@@ -52,6 +54,9 @@ def main():
     if selected_files is None:
         print("Backup cancelled.")
         return
+    destination = input(
+        "\nEnter backup destination folder: "
+    ).strip()
 
     print(
         f"\nSelected {len(selected_files):,} files."
@@ -65,6 +70,19 @@ def main():
            f" -> "
            f"{file['path']}"
         )
+    estimate = BackupEstimator.estimate(
+        selected_files,
+        destination
+    )
+
+    proceed = EstimateUI.display(
+        estimate,
+        destination
+    )
+
+    if not proceed:
+        print("\nBackup cancelled.")
+        return    
 
 
 if __name__ == "__main__":
