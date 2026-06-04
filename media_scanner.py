@@ -30,16 +30,31 @@ class MediaScanner:
         return result.stdout if result.stdout else ""
      def get_all_files(self):
          print("\nScanning for device storage...\n")
-         output = self.adb_shell(
-                'find /storage/emulated/0 \
-                ! -path "/storage/emulated/0/Android/*" \
-                -type f'
-            )
+         command = (
+            'find /storage/emulated/0 '
+            '! -path "/storage/emulated/0/Android/*" '
+            '-type f '
+            '-exec stat -c "%s|%n" {} \\;'
+         )
+         output = self.adb_shell(command)
          files = []
          for line in output.splitlines():
-                line = line.strip()
-                if line:
-                    files.append(line)
+             if "|" not in line:
+                 continue
+             try:
+                 size_str, path = line.split(
+                "|",
+                1
+            )
+
+                 files.append({
+                     "path": path.strip(),
+                     "size": int(size_str)
+                 })
+
+             except:
+               pass
+   
          return files
      def categorize_files(self, files):
             categorized = {
@@ -49,7 +64,7 @@ class MediaScanner:
                 "other": []
             }
             for file in files:
-                extension = os.path.splitext(file)[1].lower()
+                extension = os.path.splitext(file["path"])[1].lower()
                 if extension in self.PHOTO_EXTENSIONS:
                     categorized["photos"].append(file)
                 elif extension in self.VIDEO_EXTENSIONS:
@@ -63,8 +78,42 @@ class MediaScanner:
      def build_statistics(self, categories):
          stats = {}
          for category, files in categories.items():
+             total_size = sum(
+                 file["size"] for file in files
+             )
+             
+            
              stats[category] = {
-                    "count": len(files)
+                    "count": len(files),
+                    "size": total_size
              }
              
          return stats
+     def get_file_size(self, filepath):
+         output = self.adb_shell(
+                f'stat -c %s "{filepath}"'
+         )
+         try:
+             return int(output.strip())
+         except:
+                return 0
+         
+     @staticmethod
+     def format_size(size):
+
+       units = [
+           "B",
+           "KB",
+           "MB",
+           "GB",
+           "TB"
+       ]
+
+       for unit in units:
+
+           if size < 1024:
+               return f"{size:.2f} {unit}"
+
+           size /= 1024
+
+       return f"{size:.2f} PB"   

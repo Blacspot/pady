@@ -60,7 +60,11 @@ def main():
     print("\nFirst 10 files detected:")
 
     for file in selected_files[:10]:
-        print(file)
+        print(
+           f"{MediaScanner.format_size(file['size'])}"
+           f" -> "
+           f"{file['path']}"
+        )
 
 
 if __name__ == "__main__":
