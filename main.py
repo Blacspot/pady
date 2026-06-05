@@ -5,6 +5,10 @@ from estimate_ui import EstimateUI
 from backup_estimator import BackupEstimator
 from folder_picker import FolderPicker
 import shutil
+from archive_namer import ArchiveNamer
+from workspace_manager import WorkspaceManager
+from copy_engine import CopyEngine
+from zip_engine import ZipEngine
 
 
 def main():
@@ -56,6 +60,7 @@ def main():
     if selected_files is None:
         print("Backup cancelled.")
         return
+    
     print(
         "\nPlease select backup destination...."
     )
@@ -69,6 +74,14 @@ def main():
         f"{MediaScanner.format_size(free_space)}"
         )
     print(f"\nSelected destination:\n{destination}")
+    archive_path = ArchiveNamer.generate(
+        info['model'],
+        destination
+    )
+    print(
+        f"\nArchive will be created as:\n"
+        f"{archive_path}"
+    )
 
     print(
         f"\nSelected {len(selected_files):,} files."
@@ -95,6 +108,31 @@ def main():
     if not proceed:
         print("\nBackup cancelled.")
         return    
+    temp_dir = WorkspaceManager.create(
+        destination
+    )
+
+    copier = CopyEngine(
+        device_id
+    )
+
+    copier.copy_files(
+        selected_files,
+        temp_dir
+    )
+
+    ZipEngine.create_zip(
+        temp_dir,
+        archive_path
+    )
+
+    WorkspaceManager.cleanup(
+        temp_dir
+    )
+
+    print(
+        "\nBackup completed successfully."
+    )
 
 
 if __name__ == "__main__":

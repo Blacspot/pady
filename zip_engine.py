@@ -1,15 +1,38 @@
 import os
 import zipfile
-from tkinter import Tk
-from datetime import datetime
+
 
 class ZipEngine:
-    def __init__(self):
-        self.root = Tk()
-        self.root.withdraw()  # Hide the main window
-    def select_source(self):
-        """Select multiple files or a folder"""
-        choice = input("Type 'f' for files or 'd' for directory: ").lower()
 
-        if choice == 'f':
-            files = file    
+    @staticmethod
+    def create_zip(
+        source_dir,
+        archive_path
+    ):
+
+        with zipfile.ZipFile(
+            archive_path,
+            "w",
+            zipfile.ZIP_DEFLATED
+        ) as zipf:
+
+            for root, dirs, files in os.walk(
+                source_dir
+            ):
+
+                for file in files:
+
+                    full_path = os.path.join(
+                        root,
+                        file
+                    )
+
+                    arcname = os.path.relpath(
+                        full_path,
+                        source_dir
+                    )
+
+                    zipf.write(
+                        full_path,
+                        arcname
+                    )
