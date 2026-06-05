@@ -3,6 +3,8 @@ from media_scanner import MediaScanner
 from category_selector import CategorySelector
 from estimate_ui import EstimateUI
 from backup_estimator import BackupEstimator
+from folder_picker import FolderPicker
+import shutil
 
 
 def main():
@@ -54,9 +56,19 @@ def main():
     if selected_files is None:
         print("Backup cancelled.")
         return
-    destination = input(
-        "\nEnter backup destination folder: "
-    ).strip()
+    print(
+        "\nPlease select backup destination...."
+    )
+    destination = FolderPicker.select_folder()
+    if not destination:
+        print("\nNo destination selected.")
+        return
+    free_space = shutil.disk_usage(destination).free
+    print(
+        f"\nAvailable free space: "
+        f"{MediaScanner.format_size(free_space)}"
+        )
+    print(f"\nSelected destination:\n{destination}")
 
     print(
         f"\nSelected {len(selected_files):,} files."

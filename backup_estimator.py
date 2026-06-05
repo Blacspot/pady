@@ -1,4 +1,5 @@
 import shutil
+import os
 
 class BackupEstimator:
     @staticmethod
@@ -8,6 +9,8 @@ class BackupEstimator:
         )
         
         total_files = len(selected_files)
+        if not os.path.exists(destination):
+            os.makedirs(destination)
 
         free_space = shutil.disk_usage(destination).free
         gb = total_size / (1024 ** 3)

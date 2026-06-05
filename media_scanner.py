@@ -43,9 +43,18 @@ class MediaScanner:
                  continue
              try:
                  size_str, path = line.split(
-                "|",
-                1
-            )
+                    "|",
+                    1
+                 )
+                 path = path.strip()
+                 IGNORE_FOLDERS = [
+                     "/.thumbnails/",
+                     "/cache/",
+                     "/Android/data/",
+                     "/Android/obb/"
+                 ]
+                 if any(folder in path for folder in IGNORE_FOLDERS):
+                     continue
 
                  files.append({
                      "path": path.strip(),

@@ -18,25 +18,25 @@ class CategorySelector:
 
         print(
             f"[1] Photos "
-            f"({stats['photos']['count']:,} files)"
+            f"({stats['photos']['count']:,} files "
             f"{MediaScanner.format_size(stats['photos']['size'])})"
         )
 
         print(
             f"[2] Videos "
-            f"({stats['videos']['count']:,} files)"
+            f"({stats['videos']['count']:,} files"
             f"{MediaScanner.format_size(stats['videos']['size'])})"
         )
 
         print(
             f"[3] Documents "
-            f"({stats['documents']['count']:,} files)"
+            f"({stats['documents']['count']:,} files"
             f"{MediaScanner.format_size(stats['documents']['size'])})"
         )
 
         print(
             f"[4] Other "
-            f"({stats.get('other',{'count':0})['count']:,} files)"
+            f"({stats.get('other',{'count':0})['count']:,} files"
             f"{MediaScanner.format_size(stats['other']['size'])})"
         )
 
