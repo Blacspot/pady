@@ -1,4 +1,4 @@
-# Media Scanner & Backup
+# Pady The Android Backup Tool
 
 A Python-based tool for scanning media files on Android devices via ADB, categorizing them, and performing backups as ZIP archives.
 

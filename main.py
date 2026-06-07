@@ -27,6 +27,9 @@ def main():
         return
 
     device_id = adb.detect_device()
+    print(
+        f"\nWelcome to Pady The Android Backup Tool!\n"
+    )
 
     print(f"Device connected: {device_id}")
 
@@ -60,6 +63,12 @@ def main():
     if selected_files is None:
         print("Backup cancelled.")
         return
+    #selected_files = selected_files[:20]
+
+    #print(
+        #f"\nTEST MODE: Using only "
+       # f"{len(selected_files)} files."
+    #)
     
     print(
         "\nPlease select backup destination...."
@@ -80,7 +89,7 @@ def main():
     )
     print(
         f"\nArchive will be created as:\n"
-        f"{archive_path}"
+        f"\nArchive Path:\n{repr(archive_path)}"
     )
 
     print(
@@ -120,11 +129,15 @@ def main():
         selected_files,
         temp_dir
     )
+    try:
+         ZipEngine.create_zip(
+            temp_dir,
+            archive_path
+        )
 
-    ZipEngine.create_zip(
-        temp_dir,
-        archive_path
-    )
+    except Exception as e:
+        print(f"\nZIP Error: {e}")
+        return
 
     WorkspaceManager.cleanup(
         temp_dir

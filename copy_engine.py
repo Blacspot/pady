@@ -19,9 +19,14 @@ class CopyEngine:
                 "/storage/emulated/0/",
                 ""
             )
+            parts = []
+            for part in relative.split("/"):
+                part = part.strip()
+                if part:
+                    parts.append(part)
             destination = os.path.join(
                 temp_dir,
-                relative.replace("/", os.sep)
+                *parts
             )
             os.makedirs(
                 os.path.dirname(destination),
@@ -32,7 +37,7 @@ class CopyEngine:
                f"{index:,}/{total_files:,}", 
                end=""
             )
-            subprocess.run(
+            result = subprocess.run(
                 [
                     "adb",
                     "-s",
@@ -42,5 +47,18 @@ class CopyEngine:
                     destination
                 ],
                 capture_output=True,
+                text=True
             )
+
+            if result.returncode != 0:
+            
+                print(
+                    f"\nFAILED:\n{source}"
+                )
+
+                print(
+                    f"ADB Error:\n{result.stderr}"
+                )
+
+                continue
         print("\n")

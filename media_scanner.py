@@ -51,8 +51,10 @@ class MediaScanner:
                      "/.thumbnails/",
                      "/cache/",
                      "/Android/data/",
-                     "/Android/obb/"
+                     "/Android/obb/",
+                     "/.trashed-"
                  ]
+                 
                  if any(folder in path for folder in IGNORE_FOLDERS):
                      continue
 

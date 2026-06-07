@@ -31,8 +31,15 @@ class ZipEngine:
                         full_path,
                         source_dir
                     )
+                    try:
 
-                    zipf.write(
-                        full_path,
-                        arcname
-                    )
+
+                        zipf.write(
+                            full_path,
+                            arcname
+                        )
+                    except Exception as e:
+                        print(
+                            f"\nFailed:\n{full_path}"
+                        )
+                        print(e)    
